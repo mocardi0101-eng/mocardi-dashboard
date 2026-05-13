@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --pink-50:   #FBEAF0;
+  --pink-100:  #F4C0D1;
+  --pink-200:  #ED93B1;
+  --pink-400:  #D4537E;
+  --pink-600:  #993556;
+  --green-400: #639922;
+  --amber-400: #BA7517;
+  --red-400:   #E24B4A;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', system-ui, sans-serif;
+  background-color: var(--pink-50);
+  color: #374151;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .font-display {
+  font-family: 'Fredoka', sans-serif;
+  letter-spacing: 0.01em;
+}
+
+/* ── Animations ────────────────────────────────── */
+@keyframes shake {
+  0%,100% { transform:translateX(0) }
+  15%     { transform:translateX(-8px) }
+  30%     { transform:translateX(8px) }
+  45%     { transform:translateX(-6px) }
+  60%     { transform:translateX(6px) }
+  75%     { transform:translateX(-3px) }
+  90%     { transform:translateX(3px) }
+}
+.animate-shake { animation: shake 0.6s ease-in-out; }
+
+@keyframes shimmer {
+  0%   { background-position:-200% 0 }
+  100% { background-position: 200% 0 }
+}
+.skeleton {
+  background: linear-gradient(90deg,#f4c0d1 25%,#fbeaf0 50%,#f4c0d1 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 16px;
+}
+
+@keyframes confettiFall {
+  0%   { transform: translateY(-20px) rotate(0deg);   opacity: 1; }
+  100% { transform: translateY(120px) rotate(720deg); opacity: 0; }
+}
+.confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  animation: confettiFall 1s ease-in forwards;
+}
+
+/* ── Inputs ────────────────────────────────────── */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button { -webkit-appearance:none; margin:0 }
+input[type='number'] { -moz-appearance:textfield }
+
+/* ── Scrollbar ─────────────────────────────────── */
+::-webkit-scrollbar       { width:4px; height:4px }
+::-webkit-scrollbar-track { background:var(--pink-50) }
+::-webkit-scrollbar-thumb { background:var(--pink-200); border-radius:99px }
+
+/* ── Card hover ─────────────────────────────────── */
+.card-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212,83,126,0.12);
+}
+
+/* ── Dot pattern bg ─────────────────────────────── */
+.dot-pattern {
+  background-image: radial-gradient(circle, #ED93B1 1px, transparent 1px);
+  background-size: 28px 28px;
+}
