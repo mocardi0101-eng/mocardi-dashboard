@@ -14,6 +14,7 @@ export default function AuthPage({ onBack, onLogin }) {
   const [regEmail,   setRegEmail]   = useState('')
   const [regLoading, setRegLoading] = useState(false)
   const [regDone,    setRegDone]    = useState(false)
+  const [regPin,     setRegPin]     = useState('')
   const [regError,   setRegError]   = useState('')
 
   // Login state
@@ -40,6 +41,7 @@ export default function AuthPage({ onBack, onLogin }) {
       const data = await res.json()
       if (!res.ok) { setRegError(data.error); return }
       setRegDone(true)
+      if (data.pin) setRegPin(data.pin)
     } catch {
       setRegError('Terjadi kesalahan. Coba lagi.')
     } finally {
@@ -149,13 +151,32 @@ export default function AuthPage({ onBack, onLogin }) {
             {tab === 'register' && loginStep === 'email' && (
               <>
                 {regDone ? (
-                  <div className="text-center py-4">
-                    <div className="text-5xl mb-4 animate-bounce">📬</div>
-                    <h3 className="font-display font-bold text-gray-700 text-lg mb-2">Cek email kamu!</h3>
-                    <p className="text-sm text-gray-500 mb-1">PIN sudah dikirim ke</p>
-                    <p className="font-bold text-pink-500 text-sm mb-4">{regEmail}</p>
-                    <p className="text-xs text-gray-400 mb-4">Cek folder Spam jika tidak masuk ke inbox.</p>
-                    <button onClick={() => { setTab('login'); setLoginEmail(regEmail); setRegDone(false) }}
+                  <div className="text-center py-2">
+                    {regPin ? (
+                      // Email gagal terkirim — tampilkan PIN di layar
+                      <>
+                        <div className="text-4xl mb-3">🔑</div>
+                        <h3 className="font-display font-bold text-gray-700 text-lg mb-1">Akun berhasil dibuat!</h3>
+                        <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 mb-3 font-semibold">
+                          ⚠️ Email gagal terkirim — catat PIN ini sekarang!
+                        </p>
+                        <div className="bg-pink-50 border-2 border-dashed border-pink-400 rounded-2xl p-4 mb-4">
+                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">PIN kamu</p>
+                          <p className="text-4xl font-black text-pink-500 tracking-widest">{regPin}</p>
+                        </div>
+                        <p className="text-xs text-gray-400 mb-4">Screenshot atau catat PIN ini — tidak akan ditampilkan lagi.</p>
+                      </>
+                    ) : (
+                      // Email berhasil terkirim
+                      <>
+                        <div className="text-5xl mb-4 animate-bounce">📬</div>
+                        <h3 className="font-display font-bold text-gray-700 text-lg mb-2">Cek email kamu!</h3>
+                        <p className="text-sm text-gray-500 mb-1">PIN sudah dikirim ke</p>
+                        <p className="font-bold text-pink-500 text-sm mb-2">{regEmail}</p>
+                        <p className="text-xs text-gray-400 mb-4">Cek folder Spam jika tidak masuk ke inbox.</p>
+                      </>
+                    )}
+                    <button onClick={() => { setTab('login'); setLoginEmail(regEmail); setRegDone(false); setRegPin('') }}
                       className="w-full py-3 bg-gradient-to-r from-pink-400 to-pink-500 text-white font-bold rounded-2xl text-sm">
                       Lanjut Login →
                     </button>
