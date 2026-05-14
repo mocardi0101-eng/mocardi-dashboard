@@ -14,6 +14,7 @@
     "next": "14.2.29",
     "react": "^18",
     "react-dom": "^18",
+    "resend": "^6.12.3",
     "vercel": "^53.4.0"
   },
   "devDependencies": {

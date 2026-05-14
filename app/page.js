@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { supabase, isConfigured } from '@/lib/supabase'
 import { MENU } from '@/lib/constants'
 import Header       from '@/components/Header'
-import LoginScreen  from '@/components/LoginScreen'
+import LandingPage  from '@/components/LandingPage'
+import AuthPage     from '@/components/AuthPage'
 import CapacityCard from '@/components/CapacityCard'
 import TeamWellbeing from '@/components/TeamWellbeing'
 import OrderManagement from '@/components/OrderManagement'
@@ -65,6 +66,8 @@ function SetupScreen() {
 
 // ── Main Dashboard ─────────────────────────────────────────────────────────────
 export default function Dashboard() {
+  const [screen,      setScreen]      = useState('landing') // 'landing' | 'auth' | 'dashboard'
+  const [currentUser, setCurrentUser] = useState(null)
   const [loggedIn,    setLoggedIn]    = useState(false)
   const [authChecked, setAuthChecked] = useState(false)
   const [orders,      setOrders]      = useState([])
@@ -82,9 +85,14 @@ export default function Dashboard() {
   useEffect(() => {
     const stored = localStorage.getItem(AUTH_KEY)
     if (stored) {
-      const { ts } = JSON.parse(stored)
-      if (Date.now() - ts < SESSION_TTL) setLoggedIn(true)
-      else localStorage.removeItem(AUTH_KEY)
+      const { ts, user } = JSON.parse(stored)
+      if (Date.now() - ts < SESSION_TTL) {
+        setLoggedIn(true)
+        setCurrentUser(user || null)
+        setScreen('dashboard')
+      } else {
+        localStorage.removeItem(AUTH_KEY)
+      }
     }
     setAuthChecked(true)
   }, [])
@@ -230,17 +238,29 @@ export default function Dashboard() {
     finally { setSaving(false) }
   }
 
-  function handleLogin()  { localStorage.setItem(AUTH_KEY, JSON.stringify({ ts: Date.now() })); setLoggedIn(true) }
-  function handleLogout() { localStorage.removeItem(AUTH_KEY); setLoggedIn(false); setLoading(true) }
+  function handleLogin(user)  {
+    localStorage.setItem(AUTH_KEY, JSON.stringify({ ts: Date.now(), user }))
+    setCurrentUser(user)
+    setLoggedIn(true)
+    setScreen('dashboard')
+  }
+  function handleLogout() {
+    localStorage.removeItem(AUTH_KEY)
+    setLoggedIn(false)
+    setCurrentUser(null)
+    setScreen('landing')
+    setLoading(true)
+  }
 
-  if (!isConfigured)  return <SetupScreen />
-  if (!authChecked)   return null
-  if (!loggedIn)      return <LoginScreen onLogin={handleLogin} />
-  if (loading)        return <Skeleton />
+  if (!isConfigured)             return <SetupScreen />
+  if (!authChecked)              return null
+  if (screen === 'landing')      return <LandingPage onGetStarted={() => setScreen('auth')} />
+  if (screen === 'auth')         return <AuthPage onBack={() => setScreen('landing')} onLogin={handleLogin} />
+  if (loading)                   return <Skeleton />
 
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(160deg, #FBEAF0 0%, #fff 40%, #FBEAF0 100%)' }}>
-      <Header saving={saving} onLogout={handleLogout} />
+      <Header saving={saving} onLogout={handleLogout} user={currentUser} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-5 animate-fadeIn">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

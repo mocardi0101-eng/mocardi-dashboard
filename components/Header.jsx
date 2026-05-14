@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Loader2, LogOut } from 'lucide-react'
 import { formatDateID } from '@/lib/constants'
 
-export default function Header({ saving, onLogout }) {
+export default function Header({ saving, onLogout, user }) {
   const [logoErr, setLogoErr] = useState(false)
 
   return (
@@ -42,8 +42,8 @@ export default function Header({ saving, onLogout }) {
             </span>
           )}
           <div className="text-right hidden sm:block">
-            <p className="text-[10px] text-gray-300 font-semibold">Hari ini</p>
-            <p className="text-xs font-bold text-gray-600">{formatDateID()}</p>
+            {user?.name && <p className="text-xs font-bold text-pink-400">👋 {user.name}</p>}
+            <p className="text-[10px] text-gray-300 font-semibold">{formatDateID()}</p>
           </div>
           <button
             onClick={onLogout}
